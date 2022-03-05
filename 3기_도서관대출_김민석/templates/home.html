@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block css%}
+<link rel="stylesheet" href="/static/css/bootstrap.min.css">
+{% endblock %}
+
+{% block navigation %}
+  {% include 'navigation.html' %}
+{% endblock %}
+{% block content %}
+  <div class="grid gap-6 p-3 grid-cols-4 w-full">
+    {% for book in books.items %}
+        <form method="post">
+      <div class="w-full pl-5 pr-5 relative border-box">
+        <div
+            class="w-full h-96 text-center flex flex-col flex-gap-3 items-center border-solid border-2 border-gray-300 p-2 bg-white">
+          <img width="100px" src="{{ book.img_path }}">
+          <a href="/main/books/{{ book.id }}" class="block mt-2">{{ book.book_name }}</a>
+          <div>
+            {% with rating=book.rating %}
+              {% include 'rating.html' %}
+            {% endwith %}
+          </div>
+          <span class="block  mt-2">{{ book.stock }}권 남음</span>
+          <input type="hidden" name="bookId" value="{{ book.id }}">
+          <button
+              class="absolute bottom-3 mt-2 w-9/12 py-2 px-4 bg-purple-500 text-white font-semibold rounded-lg shadow-md focus:outline-none">
+            대여하기
+          </button>
+        </div>
+      </div>
+        </form>
+    {% endfor %}
+
+    <ul class="pagination justify-content-center">
+      {% if books.has_prev %}
+      <li class="page-item">
+          <a class="page-link" href="?page={{ books.prev_num }}">이전</a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+          <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
+      </li>
+      {% endif %}
+      {% for page_num in books.iter_pages() %}
+          {% if page_num %}
+              {% if page_num != books.page %}
+              <li class="page-item">
+                  <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+              </li>
+              {% else %}
+              <li class="page-item active" aria-current="page">
+                  <a class="page-link" href="#">{{ page_num }}</a>
+              </li>
+              {% endif %}
+         {% else %}
+              <li class="disabled">
+                  <a class="page-link" href="#">...</a>
+              </li>
+         {% endif %}
+      {% endfor %}
+      {% if books.has_next %}
+      <li class="page-item">
+          <a class="page-link" href="?page={{ books.next_num }}">다음</a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+          <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
+      </li>
+      {% endif %}
+    </ul>
+
+  </div>
+{% endblock %}
+
+
